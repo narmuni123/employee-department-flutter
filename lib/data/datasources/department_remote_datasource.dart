@@ -3,6 +3,8 @@ import 'package:dio/dio.dart';
 import '../../core/constants/api_constants.dart';
 import '../../core/error/app_exception.dart';
 import '../../core/network/api_client.dart';
+import '../../core/utils/request_id_generator.dart';
+import '../models/api_request.dart';
 import '../models/api_response.dart';
 import '../models/department_model.dart';
 import '../models/employee_model.dart';
@@ -40,6 +42,8 @@ class DepartmentRemoteDataSourceImpl implements DepartmentRemoteDataSource {
       return apiResponse.unwrap();
     } on DioException catch (e) {
       throw _handleError(e);
+    } catch (e) {
+      throw ParsingException('Failed to parse response', e.toString());
     }
   }
 
@@ -60,6 +64,8 @@ class DepartmentRemoteDataSourceImpl implements DepartmentRemoteDataSource {
       return apiResponse.unwrap();
     } on DioException catch (e) {
       throw _handleError(e);
+    } catch (e) {
+      throw ParsingException('Failed to parse response', e.toString());
     }
   }
 
@@ -93,17 +99,28 @@ class DepartmentRemoteDataSourceImpl implements DepartmentRemoteDataSource {
       return apiResponse.unwrap();
     } on DioException catch (e) {
       throw _handleError(e);
+    } catch (e) {
+      throw ParsingException('Failed to parse response', e.toString());
     }
   }
 
   @override
   Future<DepartmentModel> createDepartment(DepartmentModel department) async {
     try {
-      final response = await apiClient.post<Map<String, dynamic>>(
-        ApiConstants.departments,
-        data: department.toJson(),
+      // Wrap the payload in ApiRequest
+      final request = ApiRequest<Map<String, dynamic>>(
+        requestId: RequestIdGenerator.generate(),
+        source: 'flutter_app',
+        payload: department.toJson(),
       );
 
+      // Send wrapped request
+      final response = await apiClient.post<Map<String, dynamic>>(
+        ApiConstants.departments,
+        data: request.toJson((data) => data),
+      );
+
+      // Unwrap the response
       final apiResponse = ApiResponse<DepartmentModel>.fromJson(
         response.data!,
         (json) => DepartmentModel.fromJson(json as Map<String, dynamic>),
@@ -112,6 +129,8 @@ class DepartmentRemoteDataSourceImpl implements DepartmentRemoteDataSource {
       return apiResponse.unwrap();
     } on DioException catch (e) {
       throw _handleError(e);
+    } catch (e) {
+      throw ParsingException('Failed to parse response', e.toString());
     }
   }
 
@@ -121,11 +140,20 @@ class DepartmentRemoteDataSourceImpl implements DepartmentRemoteDataSource {
     DepartmentModel department,
   ) async {
     try {
-      final response = await apiClient.post<Map<String, dynamic>>(
-        '${ApiConstants.departments}/$id',
-        data: department.toJson(),
+      // Wrap the payload in ApiRequest
+      final request = ApiRequest<Map<String, dynamic>>(
+        requestId: RequestIdGenerator.generate(),
+        source: 'flutter_app',
+        payload: department.toJson(),
       );
 
+      // Send wrapped request
+      final response = await apiClient.put<Map<String, dynamic>>(
+        '${ApiConstants.departments}/$id',
+        data: request.toJson((data) => data),
+      );
+
+      // Unwrap the response
       final apiResponse = ApiResponse<DepartmentModel>.fromJson(
         response.data!,
         (json) => DepartmentModel.fromJson(json as Map<String, dynamic>),
@@ -134,6 +162,8 @@ class DepartmentRemoteDataSourceImpl implements DepartmentRemoteDataSource {
       return apiResponse.unwrap();
     } on DioException catch (e) {
       throw _handleError(e);
+    } catch (e) {
+      throw ParsingException('Failed to parse response', e.toString());
     }
   }
 
@@ -152,6 +182,8 @@ class DepartmentRemoteDataSourceImpl implements DepartmentRemoteDataSource {
       apiResponse.unwrapNullable();
     } on DioException catch (e) {
       throw _handleError(e);
+    } catch (e) {
+      throw ParsingException('Failed to parse response', e.toString());
     }
   }
 

@@ -129,6 +129,7 @@ class AddDepartmentCubit extends Cubit<AddDepartmentState> {
         'Server error, please try again later',
       ServerException(:final message) => message,
       ValidationException(:final message) => message,
+      ParsingException(:final message) => 'Data parsing error: $message',
     };
   }
 }

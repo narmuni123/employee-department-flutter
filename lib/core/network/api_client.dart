@@ -8,6 +8,7 @@ import '../error/app_exception.dart';
 abstract class ApiClient {
   Future<Response<T>> get<T>(String path, {Map<String, dynamic>? queryParams});
   Future<Response<T>> post<T>(String path, {dynamic data});
+  Future<Response<T>> put<T>(String path, {dynamic data});
   Future<Response<T>> delete<T>(String path);
   Future<Response<List<int>>> downloadFile(String path);
 }
@@ -48,6 +49,15 @@ class DioApiClient implements ApiClient {
   Future<Response<T>> post<T>(String path, {dynamic data}) async {
     try {
       return await _dio.post<T>(path, data: data);
+    } on DioException catch (e) {
+      throw _handleDioException(e);
+    }
+  }
+
+  @override
+  Future<Response<T>> put<T>(String path, {dynamic data}) async {
+    try {
+      return await _dio.put<T>(path, data: data);
     } on DioException catch (e) {
       throw _handleDioException(e);
     }

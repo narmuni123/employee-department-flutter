@@ -62,6 +62,9 @@ dependencies:
   # Open files with device's default viewer (PDF)
   open_file: ^3.3.2
 
+  # UUID generation for request IDs
+  uuid: ^4.5.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

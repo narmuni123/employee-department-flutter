@@ -3,6 +3,8 @@ import 'package:dio/dio.dart';
 import '../../core/constants/api_constants.dart';
 import '../../core/error/app_exception.dart';
 import '../../core/network/api_client.dart';
+import '../../core/utils/request_id_generator.dart';
+import '../models/api_request.dart';
 import '../models/api_response.dart';
 import '../models/employee_model.dart';
 
@@ -34,17 +36,28 @@ class EmployeeRemoteDataSourceImpl implements EmployeeRemoteDataSource {
       return apiResponse.unwrap();
     } on DioException catch (e) {
       throw _handleError(e);
+    } catch (e) {
+      throw ParsingException('Failed to parse response', e.toString());
     }
   }
 
   @override
   Future<EmployeeModel> addEmployee(int deptId, EmployeeModel employee) async {
     try {
-      final response = await apiClient.post<Map<String, dynamic>>(
-        ApiConstants.employeesByDepartment(deptId),
-        data: employee.toJson(),
+      // Wrap the payload in ApiRequest
+      final request = ApiRequest<Map<String, dynamic>>(
+        requestId: RequestIdGenerator.generate(),
+        source: 'flutter_app',
+        payload: employee.toJson(),
       );
 
+      // Send wrapped request
+      final response = await apiClient.post<Map<String, dynamic>>(
+        ApiConstants.employeesByDepartment(deptId),
+        data: request.toJson((data) => data),
+      );
+
+      // Unwrap the response
       final apiResponse = ApiResponse<EmployeeModel>.fromJson(
         response.data!,
         (json) => EmployeeModel.fromJson(json as Map<String, dynamic>),
@@ -53,6 +66,8 @@ class EmployeeRemoteDataSourceImpl implements EmployeeRemoteDataSource {
       return apiResponse.unwrap();
     } on DioException catch (e) {
       throw _handleError(e);
+    } catch (e) {
+      throw ParsingException('Failed to parse response', e.toString());
     }
   }
 
@@ -71,6 +86,8 @@ class EmployeeRemoteDataSourceImpl implements EmployeeRemoteDataSource {
       apiResponse.unwrapNullable();
     } on DioException catch (e) {
       throw _handleError(e);
+    } catch (e) {
+      throw ParsingException('Failed to parse response', e.toString());
     }
   }
 

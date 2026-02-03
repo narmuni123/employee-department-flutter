@@ -45,6 +45,8 @@ class ReportRemoteDataSourceImpl implements ReportRemoteDataSource {
       }
     } on DioException catch (e) {
       throw _handleError(e);
+    } catch (e) {
+      throw ParsingException('Failed to parse response', e.toString());
     }
   }
 

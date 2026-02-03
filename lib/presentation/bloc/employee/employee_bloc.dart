@@ -93,6 +93,7 @@ class EmployeeBloc extends Bloc<EmployeeEvent, EmployeeState> {
         'Server error, please try again later',
       ServerException(:final message) => message,
       ValidationException(:final message) => message,
+      ParsingException(:final message) => 'Data parsing error: $message',
     };
   }
 }

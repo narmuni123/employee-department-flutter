@@ -74,3 +74,26 @@ class ValidationException extends AppException {
     return true;
   }
 }
+
+class ParsingException extends AppException {
+  final String details;
+
+  @override
+  final String message;
+
+  ParsingException(this.message, this.details);
+
+  @override
+  String toString() => 'ParsingException: $message - $details';
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ParsingException &&
+          runtimeType == other.runtimeType &&
+          message == other.message &&
+          details == other.details;
+
+  @override
+  int get hashCode => Object.hash(message, details);
+}
