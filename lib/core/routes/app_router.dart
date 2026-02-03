@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../domain/usecases/add_employee.dart';
+import '../../presentation/bloc/add_department/add_department_cubit.dart';
 import '../../presentation/bloc/add_employee/add_employee_cubit.dart';
 import '../../presentation/bloc/auth/auth_cubit.dart';
 import '../../presentation/bloc/department/department_bloc.dart';
 import '../../presentation/bloc/employee/employee_bloc.dart';
 import '../../presentation/bloc/image_picker/image_picker_cubit.dart';
 import '../../presentation/bloc/report/report_cubit.dart';
+import '../../presentation/screens/add_department_screen.dart';
 import '../../presentation/screens/add_employee_screen.dart';
 import '../../presentation/screens/department_list_screen.dart';
 import '../../presentation/screens/employee_list_screen.dart';
@@ -24,6 +26,7 @@ class AppRoutes {
 
   static const String login = '/';
   static const String departments = '/departments';
+  static const String addDepartment = '/add-department';
   static const String employees = '/employees';
   static const String addEmployee = '/add-employee';
   static const String reports = '/reports';
@@ -117,6 +120,15 @@ class AppRouter {
           settings: settings,
         );
 
+      case AppRoutes.addDepartment:
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => sl<AddDepartmentCubit>(),
+            child: const AddDepartmentScreen(),
+          ),
+          settings: settings,
+        );
+
       case AppRoutes.employees:
         final departmentId = settings.arguments as int?;
         if (departmentId == null) {
@@ -206,6 +218,10 @@ class AppRouter {
 
   static void navigateToDepartments(BuildContext context) {
     Navigator.of(context).pushReplacementNamed(AppRoutes.departments);
+  }
+
+  static void navigateToAddDepartment(BuildContext context) {
+    Navigator.of(context).pushNamed(AppRoutes.addDepartment);
   }
 
   static void navigateToEmployees(BuildContext context, int departmentId) {

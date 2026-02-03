@@ -32,6 +32,14 @@ class _DepartmentListScreenState extends State<DepartmentListScreen> {
     context.read<DepartmentBloc>().add(const RefreshDepartments());
   }
 
+  void _navigateToAddDepartment() async {
+    final result = await Navigator.of(context).pushNamed('/add-department');
+    // Refresh the list if a department was added
+    if (result == true && mounted) {
+      context.read<DepartmentBloc>().add(const RefreshDepartments());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,6 +75,11 @@ class _DepartmentListScreenState extends State<DepartmentListScreen> {
             ),
           };
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _navigateToAddDepartment,
+        tooltip: 'Add Department',
+        child: const Icon(Icons.add),
       ),
     );
   }

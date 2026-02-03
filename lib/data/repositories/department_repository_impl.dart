@@ -5,6 +5,7 @@ import '../../domain/entities/department.dart';
 import '../../domain/entities/employee.dart';
 import '../../domain/repositories/department_repository.dart';
 import '../datasources/department_remote_datasource.dart';
+import '../models/department_model.dart';
 
 class DepartmentRepositoryImpl implements DepartmentRepository {
   final DepartmentRemoteDataSource remoteDataSource;
@@ -39,5 +40,29 @@ class DepartmentRepositoryImpl implements DepartmentRepository {
     } on AppException catch (e) {
       return Left(e);
     }
+  }
+
+  @override
+  Future<Either<AppException, Department>> createDepartment(
+    Department department,
+  ) async {
+    try {
+      final departmentModel = await remoteDataSource.createDepartment(
+        _departmentToModel(department),
+      );
+      return Right(departmentModel.toEntity());
+    } on AppException catch (e) {
+      return Left(e);
+    }
+  }
+
+  // Helper method to convert entity to model
+  _departmentToModel(Department department) {
+    return DepartmentModel(
+      id: department.id,
+      name: department.name,
+      location: department.location,
+      employees: [],
+    );
   }
 }

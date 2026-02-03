@@ -18,7 +18,9 @@ class DepartmentModel extends Equatable {
 
   factory DepartmentModel.fromJson(Map<String, dynamic> json) {
     return DepartmentModel(
-      id: json['id'] as int,
+      id: json['id'] is String
+          ? int.parse(json['id'] as String)
+          : json['id'] as int,
       name: json['name'] as String,
       location: json['location'] as String,
       employees:

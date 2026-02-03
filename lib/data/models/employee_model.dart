@@ -19,7 +19,9 @@ class EmployeeModel extends Equatable {
 
   factory EmployeeModel.fromJson(Map<String, dynamic> json) {
     return EmployeeModel(
-      id: json['id'] as int,
+      id: json['id'] is String
+          ? int.parse(json['id'] as String)
+          : json['id'] as int,
       name: json['name'] as String,
       email: json['email'] as String,
       position: json['position'] as String,

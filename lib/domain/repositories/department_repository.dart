@@ -10,4 +10,8 @@ abstract class DepartmentRepository {
   Future<Either<AppException, List<Employee>>> getEmployeesByDepartment(
     int deptId,
   );
+
+  Future<Either<AppException, Department>> createDepartment(
+    Department department,
+  );
 }

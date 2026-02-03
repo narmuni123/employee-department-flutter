@@ -10,10 +10,12 @@ import '../../domain/repositories/department_repository.dart';
 import '../../domain/repositories/employee_repository.dart';
 import '../../domain/repositories/report_repository.dart';
 import '../../domain/usecases/add_employee.dart';
+import '../../domain/usecases/create_department.dart';
 import '../../domain/usecases/delete_employee.dart';
 import '../../domain/usecases/download_report.dart';
 import '../../domain/usecases/get_departments.dart';
 import '../../domain/usecases/get_employees_by_department.dart';
+import '../../presentation/bloc/add_department/add_department_cubit.dart';
 import '../../presentation/bloc/auth/auth_cubit.dart';
 import '../../presentation/bloc/department/department_bloc.dart';
 import '../../presentation/bloc/employee/employee_bloc.dart';
@@ -77,6 +79,9 @@ void _registerUseCases() {
   sl.registerLazySingleton<GetEmployeesByDepartment>(
     () => GetEmployeesByDepartment(sl<DepartmentRepository>()),
   );
+  sl.registerLazySingleton<CreateDepartment>(
+    () => CreateDepartment(sl<DepartmentRepository>()),
+  );
   sl.registerLazySingleton<AddEmployee>(
     () => AddEmployee(sl<EmployeeRepository>()),
   );
@@ -94,6 +99,9 @@ void _registerBlocs() {
   );
   sl.registerFactory<DepartmentBloc>(
     () => DepartmentBloc(getDepartments: sl<GetDepartments>()),
+  );
+  sl.registerFactory<AddDepartmentCubit>(
+    () => AddDepartmentCubit(createDepartment: sl<CreateDepartment>()),
   );
   sl.registerFactory<EmployeeBloc>(
     () => EmployeeBloc(
